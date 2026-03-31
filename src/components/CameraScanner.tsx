@@ -11,6 +11,31 @@ export default function CameraScanner({ onCapture }: { onCapture: (base64Image: 
   const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
   const [error, setError] = useState<string | null>(null);
 
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+  };
+
+  const startCamera = async () => {
+    stopCamera();
+    setError(null);
+    try {
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode, width: { ideal: 1080 } },
+        audio: false,
+      });
+      streamRef.current = newStream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = newStream;
+      }
+    } catch (err) {
+      console.error("Camera access denied or error", err);
+      setError("Please allow camera access to scan cards.");
+    }
+  };
+
   useEffect(() => {
     let cancelled = false;
 
@@ -35,7 +60,7 @@ export default function CameraScanner({ onCapture }: { onCapture: (base64Image: 
         if (videoRef.current) {
           videoRef.current.srcObject = newStream;
         }
-      } catch (err: any) {
+      } catch (err) {
         if (!cancelled) {
           console.error("Camera access denied or error", err);
           setError("Please allow camera access to scan cards.");
@@ -53,31 +78,6 @@ export default function CameraScanner({ onCapture }: { onCapture: (base64Image: 
       }
     };
   }, [facingMode]);
-
-  const startCamera = async () => {
-    stopCamera();
-    setError(null);
-    try {
-      const newStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode, width: { ideal: 1080 } },
-        audio: false,
-      });
-      streamRef.current = newStream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = newStream;
-      }
-    } catch (err: any) {
-      console.error("Camera access denied or error", err);
-      setError("Please allow camera access to scan cards.");
-    }
-  };
-
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-  };
 
   const toggleCamera = () => {
     setFacingMode(prev => prev === "environment" ? "user" : "environment");

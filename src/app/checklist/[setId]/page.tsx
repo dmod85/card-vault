@@ -3,8 +3,35 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronLeft, Search, CheckCircle2, Plus, Minus, Filter, ChevronDown, ChevronUp, Layers } from "lucide-react";
+import { ChevronLeft, Search, CheckCircle2, Plus, Minus, Layers, ChevronDown, ChevronUp } from "lucide-react";
 import { useChecklist } from "@/hooks/useChecklist";
+
+interface Card {
+  id: string;
+  playerName: string;
+  cardNumber: string;
+  team?: string;
+}
+
+interface Parallel {
+  id: string;
+  name: string;
+  odds: string;
+}
+
+interface Subset {
+  id: string;
+  name: string;
+  brand: string;
+  year: string;
+  cards: Card[];
+  baseParallels?: Parallel[];
+}
+
+interface SubsetInfo {
+  id: string;
+  name: string;
+}
 
 export default function SetChecklistPage() {
   const params = useParams();
@@ -12,9 +39,9 @@ export default function SetChecklistPage() {
   
   const { checklist, isLoaded, updateQuantity, getSetProgress } = useChecklist();
   
-  const [availableSubsets, setAvailableSubsets] = useState<any[]>([]);
+  const [availableSubsets, setAvailableSubsets] = useState<SubsetInfo[]>([]);
   const [activeSubsetId, setActiveSubsetId] = useState<string>(masterSetId);
-  const [setData, setSetData] = useState<any>(null);
+  const [setData, setSetData] = useState<Subset | null>(null);
   
   const [search, setSearch] = useState("");
   const [filterMode, setFilterMode] = useState<"all" | "missing" | "owned">("all");
@@ -29,7 +56,7 @@ export default function SetChecklistPage() {
       .then(res => res.json())
       .then(data => {
         // Find all checklists associated with this Product prefix
-        const subsets = data.filter((s: any) => s.id.startsWith(masterSetId));
+        const subsets = data.filter((s: SubsetInfo) => s.id.startsWith(masterSetId));
         setAvailableSubsets(subsets);
       })
       .catch(err => {
@@ -52,7 +79,8 @@ export default function SetChecklistPage() {
         setActiveParallel("base"); // Reset parallel viewing mode when entering a new subset
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err: Error) => {
+        console.error(err);
         setError("Could not load set data.");
         setLoading(false);
       });
@@ -82,12 +110,12 @@ export default function SetChecklistPage() {
   // Calculate Progress and get Parallel Data for the ACTIVE SUBSET
   const progress = getSetProgress(activeSubsetId, setData.cards.length, activeParallel);
   const parallels = setData.baseParallels || [{ id: "base", name: "Base", odds: "1:1" }];
-  const activeParallelName = parallels.find((p: any) => p.id === activeParallel)?.name || "Base";
+  const activeParallelName = parallels.find((p: Parallel) => p.id === activeParallel)?.name || "Base";
 
   const masterProductTitle = availableSubsets.find(s => s.id === masterSetId)?.name || "Master Collection View";
 
   // Filter Cards based on search/mode FOR THE ACTIVE SUBSET & ACTIVE PARALLEL
-  const filteredCards = setData.cards.filter((card: any) => {
+  const filteredCards = setData.cards.filter((card: Card) => {
     if (search && !card.playerName.toLowerCase().includes(search.toLowerCase()) && !card.cardNumber.toLowerCase().includes(search.toLowerCase())) {
       return false;
     }
@@ -175,7 +203,7 @@ export default function SetChecklistPage() {
                 onChange={(e) => setActiveParallel(e.target.value)}
                 className="w-full bg-transparent text-white pt-3 pr-4 text-[13px] font-bold focus:outline-none appearance-none truncate"
               >
-                {parallels.map((p: any) => (
+                {parallels.map((p: Parallel) => (
                   <option key={p.id} value={p.id} className="text-slate-800 font-medium">
                     {p.name}
                   </option>
@@ -231,14 +259,14 @@ export default function SetChecklistPage() {
         </div>
 
         <div className="space-y-3">
-          {filteredCards.map((card: any) => {
+          {filteredCards.map((card: Card) => {
             const cardParallelsState = checklist[activeSubsetId]?.[card.id] || {};
             const activeQty = cardParallelsState[activeParallel] || 0;
             const isActiveOwned = activeQty > 0;
             const isExpanded = expandedCardId === card.id;
             
             // Total parallels owned for this specific card
-            const totalParallelsForCard = Object.values(cardParallelsState).reduce((a, b) => (a as number) + (b as number), 0) as number;
+            const totalParallelsForCard = Object.values(cardParallelsState).reduce((a, b) => a + b, 0);
             
             return (
               <div 
@@ -278,7 +306,7 @@ export default function SetChecklistPage() {
                     
                     <div className="flex items-center gap-2 mt-2">
                       <span className={`text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-full border shadow-sm ${
-                        activeParallel === 'base' ? 'text-slate-600 bg-slate-50 border-slate-200' : 'text-fuchsia-700 bg-fuchsia-50 border-fuchsia-200 box-shadow-[0_0_5px_rgba(192,38,211,0.2)]'
+                        activeParallel === 'base' ? 'text-slate-600 bg-slate-50 border-slate-200' : 'text-fuchsia-700 bg-fuchsia-50 border-fuchsia-200 shadow-[0_0_5px_rgba(192,38,211,0.2)]'
                       }`}>
                         {activeParallelName}
                       </span>
@@ -327,7 +355,7 @@ export default function SetChecklistPage() {
                 {/* Expanded Parallels List */}
                 {isExpanded && (
                   <div className="bg-slate-50 border-t border-slate-200 divide-y divide-slate-200/60 shadow-inner">
-                    {parallels.map((p: any) => {
+                    {parallels.map((p: Parallel) => {
                       const pQty = cardParallelsState[p.id] || 0;
                       return (
                         <div key={p.id} className={`flex items-center justify-between p-3 transition-colors ${pQty > 0 ? "bg-blue/5" : "hover:bg-slate-100/50"}`}>

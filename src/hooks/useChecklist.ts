@@ -1,5 +1,4 @@
-"use client";
-
+import { createClient, User } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -9,7 +8,7 @@ export type ChecklistState = Record<string, Record<string, Record<string, number
 export function useChecklist() {
   const [checklist, setChecklist] = useState<ChecklistState>({});
   const [isLoaded, setIsLoaded] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -60,8 +59,8 @@ export function useChecklist() {
               // Handle old "base-only" flat integer formatting OR new object formatting
               if (typeof val === "number") {
                 if (!cloudState[sId]?.[cId]?.["base"]) {
-                  cloudState[sId] = cloudState[sId] || {};
-                  cloudState[sId][cId] = cloudState[sId][cId] || {};
+                  if (!cloudState[sId]) cloudState[sId] = {};
+                  if (!cloudState[sId][cId]) cloudState[sId][cId] = {};
                   cloudState[sId][cId]["base"] = val;
 
                   migrations.push({
@@ -74,10 +73,10 @@ export function useChecklist() {
                 }
               } else {
                 for (const pId in val) {
-                  const qty = val[pId];
+                  const qty = (val as Record<string, number>)[pId];
                   if (!cloudState[sId]?.[cId]?.[pId] && qty > 0) {
-                     cloudState[sId] = cloudState[sId] || {};
-                     cloudState[sId][cId] = cloudState[sId][cId] || {};
+                     if (!cloudState[sId]) cloudState[sId] = {};
+                     if (!cloudState[sId][cId]) cloudState[sId][cId] = {};
                      cloudState[sId][cId][pId] = qty;
 
                      migrations.push({
