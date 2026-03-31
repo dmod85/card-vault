@@ -1,0 +1,22 @@
+{
+  "name": "CardVault",
+  "short_name": "CardVault",
+  "description": "Sports trading card AI scanner and price lookup tool.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#00274C",
+  "theme_color": "#00274C",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
