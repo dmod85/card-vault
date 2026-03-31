@@ -1,10 +1,13 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+let supabaseInstance: SupabaseClient | null = null;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.warn("Supabase environment variables are missing! Cloud sync will not work.");
-}
+export const supabase = (() => {
+  if (supabaseInstance) return supabaseInstance;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key";
+
+  supabaseInstance = createClient(supabaseUrl, supabaseKey);
+  return supabaseInstance;
+})() as SupabaseClient;
