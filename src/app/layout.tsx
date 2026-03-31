@@ -46,7 +46,9 @@ export default function RootLayout({
           <span className="text-xl">CardVault</span>
         </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 pb-[72px]">
-          {children}
+          <div className="max-w-7xl mx-auto w-full">
+            {children}
+          </div>
         </main>
         <BottomNav />
       </body>

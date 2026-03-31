@@ -258,7 +258,7 @@ export default function SetChecklistPage() {
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredCards.map((card: Card) => {
             const cardParallelsState = checklist[activeSubsetId]?.[card.id] || {};
             const activeQty = cardParallelsState[activeParallel] || 0;

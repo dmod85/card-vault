@@ -90,29 +90,29 @@ export default function ChecklistHomePage() {
             <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
               <Box size={16} /> Master Collections
             </h2>
-            <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredSets.map(set => (
                 <Link 
                   key={set.id} 
                   href={`/checklist/${set.id}`}
                   className="group block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-lg hover:border-blue/50 transition-all active:scale-[0.98]"
                 >
-                  <div className="h-28 w-full bg-gradient-to-tr from-slate-200 to-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-200/60">
-                    <Folder size={64} className="text-blue/10 group-hover:scale-[1.15] group-hover:-rotate-3 group-hover:text-blue/20 transition-all duration-500" />
+                  <div className="h-40 w-full bg-gradient-to-tr from-slate-200 to-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-200/60">
+                    <Folder size={84} className="text-blue/10 group-hover:scale-[1.15] group-hover:-rotate-3 group-hover:text-blue/20 transition-all duration-500" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent" />
-                    <div className="absolute bottom-3 left-4 text-white flex flex-col items-start gap-1">
+                    <div className="absolute bottom-4 left-5 text-white flex flex-col items-start gap-1">
                        <div className="bg-maize text-blue text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase">{set.brand}</div>
-                       <div className="text-lg font-black text-slate-50 tracking-tight leading-none">{set.year} Series 1</div>
+                       <div className="text-xl font-black text-slate-50 tracking-tight leading-none">{set.year} Series 1</div>
                     </div>
                   </div>
-                  <div className="p-4">
-                    <h2 className="font-bold text-blue leading-tight mb-2 tracking-tight">{set.name}</h2>
+                  <div className="p-5">
+                    <h2 className="font-bold text-blue text-lg leading-tight mb-3 tracking-tight">{set.name}</h2>
                     <div className="flex justify-between items-center text-sm text-slate-500">
                       <span className="flex items-center gap-1.5 font-medium text-xs">
                          <div className="w-1.5 h-1.5 rounded-full bg-slate-300"></div> {set.sport}
                       </span>
                       <span className="bg-slate-100/80 text-blue border border-slate-200 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm">
-                        View Complete Catalog
+                        View Catalog
                       </span>
                     </div>
                   </div>
