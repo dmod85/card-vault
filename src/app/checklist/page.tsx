@@ -35,9 +35,9 @@ export default function ChecklistHomePage() {
       });
   }, []);
 
-  // For the dashboard, only show root Master Sets (e.g. they don't have -insert-name appended)
-  // Currently, we know 2026-topps-series-1 is the only master set.
-  const rootSets = sets.filter((s) => s.id === "2026-topps-series-1");
+  // Show root Master Sets — both the regular and Celebration Mega Box products
+  const MASTER_SET_IDS = ["2026-topps-series-1", "2026-topps-series-1-celebration"];
+  const rootSets = sets.filter((s) => MASTER_SET_IDS.includes(s.id));
   
   const filteredSets = rootSets.filter((s) => s.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -97,12 +97,20 @@ export default function ChecklistHomePage() {
                   href={`/checklist/${set.id}`}
                   className="group block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-lg hover:border-blue/50 transition-all active:scale-[0.98]"
                 >
-                  <div className="h-40 w-full bg-gradient-to-tr from-slate-200 to-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-200/60">
+                  <div className={`h-40 w-full relative overflow-hidden flex items-center justify-center border-b border-slate-200/60 ${
+                    set.id.includes('celebration') 
+                      ? 'bg-gradient-to-tr from-fuchsia-200 via-amber-100 to-rose-200' 
+                      : 'bg-gradient-to-tr from-slate-200 to-slate-100'
+                  }`}>
                     <Folder size={84} className="text-blue/10 group-hover:scale-[1.15] group-hover:-rotate-3 group-hover:text-blue/20 transition-all duration-500" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent" />
                     <div className="absolute bottom-4 left-5 text-white flex flex-col items-start gap-1">
-                       <div className="bg-maize text-blue text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase">{set.brand}</div>
-                       <div className="text-xl font-black text-slate-50 tracking-tight leading-none">{set.year} Series 1</div>
+                       <div className={`text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase ${
+                         set.id.includes('celebration') 
+                           ? 'bg-gradient-to-r from-fuchsia-500 to-rose-500 text-white' 
+                           : 'bg-maize text-blue'
+                       }`}>{set.brand}{set.id.includes('celebration') ? ' 🎉' : ''}</div>
+                       <div className="text-xl font-black text-slate-50 tracking-tight leading-none">{set.name.replace('2026 Topps ', '')}</div>
                     </div>
                   </div>
                   <div className="p-5">
