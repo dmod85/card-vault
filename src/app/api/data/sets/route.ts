@@ -26,14 +26,10 @@ export async function GET() {
       }
     }
     
-    // Sort: master sets first (regular, then celebration), then alphabetical for inserts
-    const MASTER_ORDER = ["2026-topps-series-1", "2026-topps-series-1-celebration"];
+    // Simple sort so Base set is first, then alphabetical for inserts
     sets.sort((a, b) => {
-      const aIdx = MASTER_ORDER.indexOf(a.id);
-      const bIdx = MASTER_ORDER.indexOf(b.id);
-      if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
-      if (aIdx !== -1) return -1;
-      if (bIdx !== -1) return 1;
+      if (a.id === "2026-topps-series-1") return -1;
+      if (b.id === "2026-topps-series-1") return 1;
       return a.name.localeCompare(b.name);
     });
 

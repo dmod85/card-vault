@@ -55,17 +55,8 @@ export default function SetChecklistPage() {
     fetch("/api/data/sets")
       .then(res => res.json())
       .then(data => {
-        // Find all checklists associated with this Product prefix.
-        // Use exact prefix match: for "2026-topps-series-1", match itself and
-        // "2026-topps-series-1-*" but NOT "2026-topps-series-1-celebration-*"
-        // (those belong to the celebration master set).
-        const subsets = data.filter((s: SubsetInfo) => {
-          if (s.id === masterSetId) return true; // always include self
-          if (!s.id.startsWith(masterSetId + "-")) return false; // must be a child
-          // If viewing the regular set, exclude celebration subsets
-          if (masterSetId === "2026-topps-series-1" && s.id.startsWith("2026-topps-series-1-celebration")) return false;
-          return true;
-        });
+        // Find all checklists associated with this Product prefix
+        const subsets = data.filter((s: SubsetInfo) => s.id.startsWith(masterSetId));
         setAvailableSubsets(subsets);
       })
       .catch(err => {
